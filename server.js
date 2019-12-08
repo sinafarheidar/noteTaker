@@ -13,10 +13,8 @@ var PORT = 3000;
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-let notes= [{
-  noteTitle: "bruh",
-  noteText: "huh"
-}]
+
+let notes = []
 
 // Routes
 // =============================================================
@@ -26,46 +24,73 @@ app.get("/", function(req, res) {
   res.sendFile(path.join(__dirname, "./public/index.html"));
 });
 
+app.get("/viewnotes", function(req, res) {
+  res.sendFile(path.join(__dirname, "./public/viewnotes.html"));
+});
+
 app.get("/notes", function(req, res) {
     res.sendFile(path.join(__dirname, "./public/notes.html"));
   });
 
 
 // Displays a single character, or returns false
-app.get("/api/notes/", function(req, res) {
+app.get("/api/notes", function(req, res) {
 
-    // fs.readFile("db.json", "utf8", function(error, data) {
+//  const notes = getNotes();
+  res.json(notes);
 
-    //     if (error) {
-    //       return console.log(error);
-    //     }
-      
-    //     console.log(data);
-    //     return res.json(data)
-      
-    //   });
-    return res.json(notes)
+  // res.send("notes")
 });
 
 app.post("/api/notes/", function(req, res) {
 
-    let newNote = res.body
+    let newNote = req.body;
+    notes.push(newNote);
 
-    // fs.appendFile("db.json", res.json(newNote), function(error) {
+    console.log("Successfully Posted Note!")
+
+
+    // fs.writeFile("db.json", JSON.stringify(notes), function(error) {
 
     //     if (error) {
     //       return console.log(error);
     //     }
       
-    //     console.log("Data successfully posted");
+        res.send("Data successfully posted");
       
     //   });
-    notes.push(newNote);
-    res.json(true);
-    console.log(notes)
 });
 
+app.post("/api/clear", function(req, res) {
+  // Empty out the arrays of data
+  notes.length = 0;
 
+  res.json({ ok: true });
+});
+
+// function getNotes() {
+  // fs.readFile("db.json", "utf8", function(error, data) {
+
+  //   let parsedNotes;
+  //     // If notes isn't an array or can't be turned into one, send back a new empty array
+  //     try {
+  //       parsedNotes = [].concat(JSON.parse(notes));
+  //     } catch (err) {
+  //       parsedNotes = [];
+  //     }
+  //     return parsedNotes;
+
+  //   if (error) {
+  //     return console.log(error);
+  //   }
+  
+  //   // if (data.length > 0)
+  //   //   return data
+  //   // else
+  //   //   return []
+
+  // });
+// }
 // Starts the server to begin listening
 // =============================================================
 app.listen(PORT, function() {
